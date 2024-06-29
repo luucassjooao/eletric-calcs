@@ -140,7 +140,7 @@ export default function SecondaryTransformerInformations() {
 
   const regexAlphabeticCharacters = /[a-zA-Z]/g;
 
-  function handlerUpdateQuantity(event: InputChange) {
+  function handleUpdateQuantity(event: InputChange) {
     const { value } = event.target;
     const numericValue = value.replace(regexAlphabeticCharacters, '');
 
@@ -155,7 +155,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateTypePotency(value: string) {
+  function handleUpdateTypePotency(value: string) {
     const valueTypePotency = value as TypePotency;
     if (!value) {
       setError({ field: 'typePotency', message: 'Selecione a unidade de potência' });
@@ -169,7 +169,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerValuePotency(event: InputChange) {
+  function handleValuePotency(event: InputChange) {
     const { value } = event.target;
 
     if (!value) {
@@ -189,7 +189,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerValueTension(event: InputChange) {
+  function handleValueTension(event: InputChange) {
     const { value } = event.target;
 
     if (!value) {
@@ -203,7 +203,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateValueFpOnChange(event: InputChange) {
+  function handleUpdateValueFpOnChange(event: InputChange) {
     const value = event.target.value;
 
     if (!value) {
@@ -217,7 +217,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateValueFpOnBlur(event: InputChange) {
+  function handleUpdateValueFpOnBlur(event: InputChange) {
     let value = event.target.value.replace(/[^0-9.,]/g, '');
     if (value === '1') {
       value = '1';
@@ -232,7 +232,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateEfficiencyOnChange(event: InputChange) {
+  function handleUpdateEfficiencyOnChange(event: InputChange) {
     const value = event.target.value;
 
     if (!value) {
@@ -245,7 +245,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateEfficiencyOnBlur(event: InputChange) {
+  function handleUpdateEfficiencyOnBlur(event: InputChange) {
     let value = event.target.value.replace(/[^0-9.,]/g, '');
     if (value === '1') {
       value = '1';
@@ -258,7 +258,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateTP(value: string) {
+  function handleUpdateTP(value: string) {
     if (!value) {
       setError({ field: 'threePhase', message: 'Selecione se está circuito é trifásica ou não' });
     } else {
@@ -270,7 +270,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerUpdateName(event: InputChange) {
+  function handleUpdateName(event: InputChange) {
     const { value } = event.target;
 
     if (!value) {
@@ -284,7 +284,7 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
-  function handlerConfirmAddNewCircuit() {
+  function handleConfirmAddNewCircuit() {
     const current =
       (changeInfosCircuit.valuePotency) / (
         (changeInfosCircuit.threePhase ?
@@ -400,17 +400,17 @@ export default function SecondaryTransformerInformations() {
             setEditUsageTension={setEditLineUsageTension}
             editLineUsageTension={editLineUsageTension}
             changeInfosCircuit={changeInfosCircuit}
-            handlerUpdateName={handlerUpdateName}
-            handlerUpdateQuantity={handlerUpdateQuantity}
-            handlerUpdateTypePotency={handlerUpdateTypePotency}
-            handlerValuePotency={handlerValuePotency}
-            handlerValueTension={handlerValueTension}
-            handlerUpdateValueFpOnBlur={handlerUpdateValueFpOnBlur}
-            handlerUpdateValueFpOnChange={handlerUpdateValueFpOnChange}
-            handlerUpdateEfficiencyOnChange={handlerUpdateEfficiencyOnChange}
-            handlerUpdateEfficiencyOnBlur={handlerUpdateEfficiencyOnBlur}
-            handlerUpdateTP={handlerUpdateTP}
-            handlerConfirmAddNewCircuit={handlerConfirmAddNewCircuit}
+            handleUpdateName={handleUpdateName}
+            handleUpdateQuantity={handleUpdateQuantity}
+            handleUpdateTypePotency={handleUpdateTypePotency}
+            handleValuePotency={handleValuePotency}
+            handleValueTension={handleValueTension}
+            handleUpdateValueFpOnBlur={handleUpdateValueFpOnBlur}
+            handleUpdateValueFpOnChange={handleUpdateValueFpOnChange}
+            handleUpdateEfficiencyOnChange={handleUpdateEfficiencyOnChange}
+            handleUpdateEfficiencyOnBlur={handleUpdateEfficiencyOnBlur}
+            handleUpdateTP={handleUpdateTP}
+            handleConfirmAddNewCircuit={handleConfirmAddNewCircuit}
             disabledConfirmAddNewCircuit={disabledConfirmAddNewCircuit}
             getErrorMessageByFieldName={getErrorMessageByFieldName}
             valueCVAndHP={valueCVAndHP}

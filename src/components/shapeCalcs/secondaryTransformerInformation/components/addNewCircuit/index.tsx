@@ -14,17 +14,17 @@ interface IProps {
   setEditUsageTension: (value: React.SetStateAction<boolean>) => void;
   editLineUsageTension: boolean;
   changeInfosCircuit: ICircuit;
-  handlerUpdateName(event: InputChange): void;
-  handlerUpdateQuantity(event: InputChange): void;
-  handlerUpdateTypePotency(value: string): void;
-  handlerValuePotency(event: InputChange): void;
-  handlerValueTension(event: InputChange): void;
-  handlerUpdateValueFpOnChange(event: InputChange): void;
-  handlerUpdateValueFpOnBlur(event: InputChange): void;
-  handlerUpdateEfficiencyOnBlur(event: InputChange): void;
-  handlerUpdateEfficiencyOnChange(event: InputChange): void;
-  handlerUpdateTP(value: string): void;
-  handlerConfirmAddNewCircuit(): void;
+  handleUpdateName(event: InputChange): void;
+  handleUpdateQuantity(event: InputChange): void;
+  handleUpdateTypePotency(value: string): void;
+  handleValuePotency(event: InputChange): void;
+  handleValueTension(event: InputChange): void;
+  handleUpdateValueFpOnChange(event: InputChange): void;
+  handleUpdateValueFpOnBlur(event: InputChange): void;
+  handleUpdateEfficiencyOnBlur(event: InputChange): void;
+  handleUpdateEfficiencyOnChange(event: InputChange): void;
+  handleUpdateTP(value: string): void;
+  handleConfirmAddNewCircuit(): void;
   disabledConfirmAddNewCircuit: boolean;
   getErrorMessageByFieldName: ({ fieldName }: MessageError) => string | undefined;
   valueCVAndHP: number;
@@ -38,19 +38,19 @@ export default function AddNewCircuit({
   setEditUsageTension,
   editLineUsageTension,
   changeInfosCircuit,
-  handlerUpdateName,
-  handlerUpdateQuantity,
-  handlerUpdateTypePotency,
-  handlerValuePotency,
-  handlerValueTension,
-  handlerUpdateValueFpOnBlur,
-  handlerUpdateEfficiencyOnBlur,
-  handlerUpdateEfficiencyOnChange,
-  handlerUpdateTP,
-  handlerConfirmAddNewCircuit,
+  handleUpdateName,
+  handleUpdateQuantity,
+  handleUpdateTypePotency,
+  handleValuePotency,
+  handleValueTension,
+  handleUpdateValueFpOnBlur,
+  handleUpdateEfficiencyOnBlur,
+  handleUpdateEfficiencyOnChange,
+  handleUpdateTP,
+  handleConfirmAddNewCircuit,
   disabledConfirmAddNewCircuit,
   getErrorMessageByFieldName,
-  handlerUpdateValueFpOnChange,
+  handleUpdateValueFpOnChange,
   valueCVAndHP
 }: IProps) {
   const [onFocus, setOnFocus] = useState({
@@ -89,7 +89,7 @@ export default function AddNewCircuit({
                 type='text'
                 placeholder='Ex: Motor Trifásico WEG'
                 value={changeInfosCircuit.name}
-                onChange={handlerUpdateName}
+                onChange={handleUpdateName}
               />
             </FormGroup>
             <FormGroup error={getErrorMessageByFieldName({ fieldName: 'quantity' })!} >
@@ -97,7 +97,7 @@ export default function AddNewCircuit({
               <TextInput
                 type='numeric'
                 placeholder='Ex: 0, 1, 2'
-                onChange={handlerUpdateQuantity}
+                onChange={handleUpdateQuantity}
                 value={changeInfosCircuit.quantity || ''}
               />
             </FormGroup>
@@ -109,7 +109,7 @@ export default function AddNewCircuit({
                 className='justify-center'
                 gridCols={2}
                 choices={['Watts', 'VA', 'CV', 'HP']}
-                handlerUpdateValue={handlerUpdateTypePotency}
+                handleUpdateValue={handleUpdateTypePotency}
                 valueSelected={changeInfosCircuit.typePotency}
                 />
             </FormGroup>
@@ -119,7 +119,7 @@ export default function AddNewCircuit({
               <FormGroup error={getErrorMessageByFieldName({ fieldName: 'valuePotency' })!} >
                 <TextInput
                   placeholder={`Qual o valor em ${changeInfosCircuit.typePotency}?`}
-                  onChange={handlerValuePotency}
+                  onChange={handleValuePotency}
                   value={valueCVAndHP || ''}
                   type="numeric"
                   />
@@ -127,7 +127,7 @@ export default function AddNewCircuit({
               <FormGroup error={getErrorMessageByFieldName({ fieldName: 'tension' })!} >
                 <TextInput
                   placeholder='Qual o valor da tensao?'
-                  onChange={handlerValueTension}
+                  onChange={handleValueTension}
                   type="numeric"
                   value={changeInfosCircuit.usageVolts || ''}
                   />
@@ -141,7 +141,7 @@ export default function AddNewCircuit({
                   <TextInput
                     placeholder='Qual o fp?'
                     onBlur={(e) => {
-                      handlerUpdateValueFpOnBlur(e);
+                      handleUpdateValueFpOnBlur(e);
                       setOnFocus({
                         set: false,
                         where: ''
@@ -154,7 +154,7 @@ export default function AddNewCircuit({
                     type='numeric'
                     min={0.1}
                     max={1}
-                    onChange={handlerUpdateValueFpOnChange}
+                    onChange={handleUpdateValueFpOnChange}
                     value={changeInfosCircuit.fp || ''}
                   >
                   {(onFocus.set && onFocus.where === 'fp') && (
@@ -169,9 +169,9 @@ export default function AddNewCircuit({
                 <>
                   <TextInput
                     placeholder='Qual o rendimento?'
-                    onChange={handlerUpdateEfficiencyOnChange}
+                    onChange={handleUpdateEfficiencyOnChange}
                     onBlur={(e) => {
-                      handlerUpdateEfficiencyOnBlur(e);
+                      handleUpdateEfficiencyOnBlur(e);
                       setOnFocus({
                         set: false,
                         where: ''
@@ -201,11 +201,11 @@ export default function AddNewCircuit({
           <ChooseButton
             gridCols={2}
             choices={['Sim', 'Não']}
-            handlerUpdateValue={handlerUpdateTP}
+            handleUpdateValue={handleUpdateTP}
             valueSelected={changeInfosCircuit.threePhase === true ? 'Sim' : 'Não'}
           />
           <div className='flex justify-center items-center mt-2' >
-            <Button disabled={disabledConfirmAddNewCircuit} onClick={handlerConfirmAddNewCircuit} >Confirmar</Button>
+            <Button disabled={disabledConfirmAddNewCircuit} onClick={handleConfirmAddNewCircuit} >Confirmar</Button>
           </div>
         </div>
       )}
