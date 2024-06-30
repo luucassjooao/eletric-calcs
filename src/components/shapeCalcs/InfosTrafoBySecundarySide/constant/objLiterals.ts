@@ -1,4 +1,4 @@
-import { TypePotency } from '..';
+import { TypePotency } from '../types';
 
 export const objRealSum: Record<TypePotency, (value: number) => number> = {
   'Watts': (value: number) => value,

@@ -1,12 +1,12 @@
 import { ThemeProvider } from './app/context/ThemeProvider';
-import SecondaryTransformerInformations from './components/shapeCalcs/secondaryTransformerInformation';
+import InfosTrafoBySecundarySide from './components/shapeCalcs/InfosTrafoBySecundarySide';
 
 
 function App() {
 
   return (
     <ThemeProvider>
-      <SecondaryTransformerInformations />
+      <InfosTrafoBySecundarySide />
     </ThemeProvider>
   );
 }

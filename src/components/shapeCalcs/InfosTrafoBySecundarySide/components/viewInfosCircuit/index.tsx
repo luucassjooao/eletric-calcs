@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ICircuit } from '../..';
 import { formatNumber } from '@/app/utils/functions/formatNumber';
+import { ICircuit } from '../../types';
 
 interface IProps {
   circuits: ICircuit[];

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ICircuit, InputChange } from '../..';
+import { InputChange } from '../..';
 import ChooseButton from '../../../../ChooseButton';
 import FormGroup from '../../../../FormGroup';
 import TextInput from '../../../../TextInput';
 import { MessageError } from '@/app/hooks/useErrors';
 import { Button } from '@/components/ui/Button';
+import { ICircuit } from '../../types';
+import * as F from '../../constant/fieldSetError';
 
 interface IProps {
   setAddNewCircuit: (value: React.SetStateAction<boolean>) => void;
@@ -91,18 +93,18 @@ export default function AddNewCircuit({
           {editLineUsageTension && (
             <Button variant={'ghost'} className='border w-full' onClick={() => setEditLineUsageTension(true)} >EDITE TENSÃO DE LINHA</Button>
           )}
-          <FormGroup error={getErrorMessageByFieldName({ fieldName: 'turnsRatio' })!} >
-              <span className='text-sm' >Qual a relação de espiras do primario e secundario?</span>
-              <TextInput
-                type='text'
-                placeholder='Ex: 1000:100'
-                onChange={handleUpdateTurnsRatioOnChange}
-                onBlur={handleUpdateTurnsRatioOnBlur}
-                className='justify-center'
-                disabled={editTurnsRatio}
-              />
-            </FormGroup>
-                        {editTurnsRatio && (
+          <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorTurnsRatio })!} >
+            <span className='text-sm' >Qual a relação de espiras do primário e secundário?</span>
+            <TextInput
+              type='text'
+              placeholder='Ex: 1000:100'
+              onChange={handleUpdateTurnsRatioOnChange}
+              onBlur={handleUpdateTurnsRatioOnBlur}
+              className='justify-center'
+              disabled={editTurnsRatio}
+            />
+          </FormGroup>
+          {editTurnsRatio && (
             <Button variant={'ghost'} className='border w-full' onClick={handleEditTurnsRatio} >EDITE RELAÇÃO DE ESPIRAS</Button>
           )}
         </div>
@@ -111,7 +113,7 @@ export default function AddNewCircuit({
       {addNewCircuit && (
         <div>
           <div className='flex justify-center gap-8 mt-2' >
-            <FormGroup error={getErrorMessageByFieldName({ fieldName: 'name' })!} >
+            <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorName })!} >
               <span>Qual o nome deste circuito?</span>
               <TextInput
                 type='text'
@@ -120,7 +122,7 @@ export default function AddNewCircuit({
                 onChange={handleUpdateName}
               />
             </FormGroup>
-            <FormGroup error={getErrorMessageByFieldName({ fieldName: 'quantity' })!} >
+            <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorQuantity })!} >
               <span className='text-sm' >Quantos circuitos igual a este?</span>
               <TextInput
                 type='numeric'
@@ -132,39 +134,39 @@ export default function AddNewCircuit({
           </div>
           <h3 className='text-center text-xl'>A Potência está em</h3>
           <div>
-            <FormGroup error={getErrorMessageByFieldName({ fieldName: 'typePotency' })!} >
+            <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorTypePotency })!} >
               <ChooseButton
                 className='justify-center'
                 gridCols={2}
                 choices={['Watts', 'VA', 'CV', 'HP']}
                 handleUpdateValue={handleUpdateTypePotency}
                 valueSelected={changeInfosCircuit.typePotency}
-                />
+              />
             </FormGroup>
           </div>
           {changeInfosCircuit.typePotency && (
             <div className='flex justify-center gap-4 my-2'>
-              <FormGroup error={getErrorMessageByFieldName({ fieldName: 'valuePotency' })!} >
+              <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorValuePotency })!} >
                 <TextInput
                   placeholder={`Qual o valor em ${changeInfosCircuit.typePotency}?`}
                   onChange={handleValuePotency}
                   value={valueCVAndHP || ''}
                   type="numeric"
-                  />
+                />
               </FormGroup>
-              <FormGroup error={getErrorMessageByFieldName({ fieldName: 'tension' })!} >
+              <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorTension })!} >
                 <TextInput
                   placeholder='Qual o valor da tensao?'
                   onChange={handleValueTension}
                   type="numeric"
                   value={changeInfosCircuit.usageVolts || ''}
-                  />
+                />
               </FormGroup>
             </div>
           )}
           <div className='flex justify-center gap-4'>
             <div>
-              <FormGroup error={getErrorMessageByFieldName({ fieldName: 'fp' })!} >
+              <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorFp })!} >
                 <>
                   <TextInput
                     placeholder='Qual o fp?'
@@ -185,15 +187,15 @@ export default function AddNewCircuit({
                     onChange={handleUpdateValueFpOnChange}
                     value={changeInfosCircuit.fp || ''}
                   >
-                  {(onFocus.set && onFocus.where === 'fp') && (
-                    <small className='text-xs fixed mt-1 text-red-700 font-bold' >FP abaixo de 1, não precisa de colocar 0.</small>
-                  )}
+                    {(onFocus.set && onFocus.where === 'fp') && (
+                      <small className='text-xs fixed mt-1 text-red-700 font-bold' >FP abaixo de 1, não precisa de colocar 0.</small>
+                    )}
                   </TextInput>
                 </>
               </FormGroup>
             </div>
             <div >
-              <FormGroup error={getErrorMessageByFieldName({ fieldName: 'efficiency' })!} >
+              <FormGroup error={getErrorMessageByFieldName({ fieldName: F. fieldSetErrorEfficiency })!} >
                 <>
                   <TextInput
                     placeholder='Qual o rendimento?'

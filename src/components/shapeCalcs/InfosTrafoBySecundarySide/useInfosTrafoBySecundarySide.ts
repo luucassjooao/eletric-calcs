@@ -1,69 +1,12 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import AddNewCircuit from './components/addNewCircuit';
-import ViewInfosCircuit from './components/viewInfosCircuit';
-import { useErrors } from '@/app/hooks/useErrors';
-import { cn } from '@/app/libs/utils';
-import { objIllustrationString, objRealSum } from './constant/objLiterals';
-import { colors } from './constant/colors';
+import { useEffect, useState } from 'react';
+import { ICircuit, ISumsValueAndIllustration, TypePotency } from './types';
 import { formatNumber } from '@/app/utils/functions/formatNumber';
+import { InputChange } from '.';
+import { objIllustrationString, objRealSum } from './constant/objLiterals';
+import { useErrors } from '@/app/hooks/useErrors';
+import * as F from './constant/fieldSetError';
 
-export type TypePotency = 'Watts' | 'CV' | 'HP' | 'VA' | '';
-
-export interface ICircuit {
-  id: string;
-  typePotency: TypePotency;
-  valuePotency: number;
-  illustrationCalcPotency: string;
-  usageVolts: number;
-  threePhase: boolean;
-  fp: number;
-  efficiency: number;
-  name: string;
-  quantity: number;
-
-  calcsValues?: {
-    current: {
-      value: string;
-      illustration: string;
-    }
-    CosDegrees: {
-      value: string;
-      illustration: string;
-    };
-    horizontalCurrent: {
-      value: string;
-      illustration: string;
-    };
-    verticalCurrent: {
-      value: string;
-      illustration: string;
-    };
-  }
-}
-
-interface ITypeSums<T> {
-  value: string;
-  illustration: T | string;
-}
-
-interface ISumsValueAndIllustration {
-  horizontalCurrent: ITypeSums<string[]>;
-  verticalCurrent: ITypeSums<string[]>;
-  totalCurrentSecundary: ITypeSums<string>;
-  tanTotalCurrentLineSecundary: ITypeSums<string>;
-  tensionPhaseSecundary: ITypeSums<string>;
-  tensionPhasePrimary: ITypeSums<string>;
-  currentLinePrimary: ITypeSums<string>;
-  apparentPotencyS: ITypeSums<string>;
-  activePotencyP: ITypeSums<string>;
-  reactivePotencyQ: ITypeSums<string>;
-  FPSystem: ITypeSums<string>;
-  tanDegreeCurrentSecundary: string;
-}
-
-export type InputChange = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-
-export default function SecondaryTransformerInformations() {
+export function useInfosTrafoBySecundarySide() {
   const [circuits, setCircuits] = useState<ICircuit[]>([]);
   const [addNewCircuit, setAddNewCircuit] = useState(false);
   const [changeInfosCircuit, setChangeInfosCircuit] = useState<ICircuit>({
@@ -238,9 +181,9 @@ export default function SecondaryTransformerInformations() {
     const numericValue = value.replace(regexAlphabeticCharacters, '');
 
     if (!numericValue) {
-      setError({ field: 'quantity', message: 'Coloque quantos circuitos igual a este!' });
+      setError({ field: F.fieldSetErrorQuantity, message: 'Coloque quantos circuitos igual a este!' });
     } else {
-      removeError({ fieldName: 'quantity' });
+      removeError({ fieldName: F.fieldSetErrorQuantity });
     }
 
     setChangeInfosCircuit((prev) => {
@@ -251,9 +194,9 @@ export default function SecondaryTransformerInformations() {
   function handleUpdateTypePotency(value: string) {
     const valueTypePotency = value as TypePotency;
     if (!value) {
-      setError({ field: 'typePotency', message: 'Selecione a unidade de potência' });
+      setError({ field: F.fieldSetErrorTypePotency, message: 'Selecione a unidade de potência' });
     } else {
-      removeError({ fieldName: 'typePotency' });
+      removeError({ fieldName: F.fieldSetErrorTypePotency });
     }
     setChangeInfosCircuit((prev) => {
       const typePotency = valueTypePotency;
@@ -266,9 +209,9 @@ export default function SecondaryTransformerInformations() {
     const { value } = event.target;
 
     if (!value) {
-      setError({ field: 'valuePotency', message: `Coloque o valor em ${changeInfosCircuit.typePotency}` });
+      setError({ field: F.fieldSetErrorValuePotency, message: `Coloque o valor em ${changeInfosCircuit.typePotency}` });
     } else {
-      removeError({ fieldName: 'valuePotency' });
+      removeError({ fieldName: F.fieldSetErrorValuePotency });
     }
 
     const valueNumber = Number(value.replace(regexAlphabeticCharacters, ''));
@@ -285,9 +228,9 @@ export default function SecondaryTransformerInformations() {
     const { value } = event.target;
 
     if (!value) {
-      setError({ field: 'tension', message: 'Coloque a tensão na qual está circuito utiliza' });
+      setError({ field: F.fieldSetErrorTension, message: 'Coloque a tensão na qual está circuito utiliza' });
     } else {
-      removeError({ fieldName: 'tension' });
+      removeError({ fieldName: F.fieldSetErrorTension });
     }
     setChangeInfosCircuit((prev) => {
       const usageVolts = Number(value.replace(regexAlphabeticCharacters, ''));
@@ -299,9 +242,9 @@ export default function SecondaryTransformerInformations() {
     const value = event.target.value;
 
     if (!value) {
-      setError({ field: 'fp', message: 'Coloque o Fator de potência com números inteiro' });
+      setError({ field: F.fieldSetErrorFp, message: 'Coloque o Fator de potência com números inteiro' });
     } else {
-      removeError({ fieldName: 'fp' });
+      removeError({ fieldName: F.fieldSetErrorFp });
     }
 
     setChangeInfosCircuit((prev) => {
@@ -328,9 +271,9 @@ export default function SecondaryTransformerInformations() {
     const value = event.target.value;
 
     if (!value) {
-      setError({ field: 'efficiency', message: 'Coloque o valor do Rendimento com números inteiro' });
+      setError({ field: F.fieldSetErrorEfficiency, message: 'Coloque o valor do Rendimento com números inteiro' });
     } else {
-      removeError({ fieldName: 'efficiency' });
+      removeError({ fieldName: F.fieldSetErrorEfficiency });
     }
     setChangeInfosCircuit((prev) => {
       return { ...prev, efficiency: Number(value) };
@@ -352,9 +295,9 @@ export default function SecondaryTransformerInformations() {
 
   function handleUpdateTP(value: string) {
     if (!value) {
-      setError({ field: 'threePhase', message: 'Selecione se está circuito é trifásica ou não' });
+      setError({ field: F.fieldSetErrorThreePhase, message: 'Selecione se está circuito é trifásica ou não' });
     } else {
-      removeError({ fieldName: 'threePhase' });
+      removeError({ fieldName: F.fieldSetErrorThreePhase });
     }
     setChangeInfosCircuit((prev) => {
       const threePhase = value === 'Sim' ? true : false;
@@ -366,9 +309,9 @@ export default function SecondaryTransformerInformations() {
     const { value } = event.target;
 
     if (!value) {
-      setError({ field: 'name', message: 'Dê um nome para essa(s) circuitos(s)!' });
+      setError({ field: F.fieldSetErrorName, message: 'Dê um nome para essa(s) circuitos(s)!' });
     } else {
-      removeError({ fieldName: 'name' });
+      removeError({ fieldName: F.fieldSetErrorName });
     }
     setChangeInfosCircuit((prev) => {
       const name = event.target.value;
@@ -380,9 +323,9 @@ export default function SecondaryTransformerInformations() {
     const value = event.target.value;
 
     if(!value) {
-      setError({ field: 'turnsRatio', message: 'Coloque a relação de espiras!' });
+      setError({ field: F.fieldSetErrorTurnsRatio, message: 'Coloque a relação de espiras!' });
     } else {
-      removeError({ fieldName: 'turnsRatio' });
+      removeError({ fieldName: F.fieldSetErrorTurnsRatio });
     }
   }
 
@@ -391,12 +334,12 @@ export default function SecondaryTransformerInformations() {
     const regexVerificationShapeTurnsRatio = /^\d+:\d+$/;
 
     if(!value) {
-      setError({ field: 'turnsRatio', message: 'Coloque a relação de espiras!' });
+      setError({ field: F.fieldSetErrorTurnsRatio, message: 'Coloque a relação de espiras!' });
     } else if (!regexVerificationShapeTurnsRatio.test(value)) {
-      setError({ field: 'turnsRatio', message: 'Formato de espiras inválido. Ele deve ser assim: 1000:100' });
+      setError({ field: F.fieldSetErrorTurnsRatio, message: 'Formato de espiras inválido. Ele deve ser assim: 1000:100' });
       return;
     } else {
-      removeError({ fieldName: 'turnsRatio' });
+      removeError({ fieldName: F.fieldSetErrorTurnsRatio });
     }
 
     const [primary, secundary] = value.split(':');
@@ -507,81 +450,30 @@ export default function SecondaryTransformerInformations() {
     errors.length === 0
   );
 
-  return (
-    <div className='mt-10 max-[815px]:mx-auto mb-14' >
-      <h1 className='text-center mb-8 font-bold text-xl' >Informações do secundario do trafo</h1>
-      <div className={'flex max-[815px]:flex-col mt-0'} >
-        <div className={cn(circuits.length > 0 ? 'max-w-[570px] hover:overflow-y-auto h-screen max-[815px]:h-auto' : 'w-fit', 'mx-auto max-[815px]:w-fit')} >
-          <AddNewCircuit
-            setAddNewCircuit={setAddNewCircuit}
-            addNewCircuit={addNewCircuit}
-            setLineTension={setLineTension}
-            lineTension={lineTension}
-            turnsRatio={turnsRatio}
-            handleUpdateTurnsRatioOnChange={handleUpdateTurnsRatioOnChange}
-            handleUpdateTurnsRatioOnBlur={handleUpdateTurnsRatioOnBlur}
-            changeInfosCircuit={changeInfosCircuit}
-            handleUpdateName={handleUpdateName}
-            handleUpdateQuantity={handleUpdateQuantity}
-            handleUpdateTypePotency={handleUpdateTypePotency}
-            handleValuePotency={handleValuePotency}
-            handleValueTension={handleValueTension}
-            handleUpdateValueFpOnBlur={handleUpdateValueFpOnBlur}
-            handleUpdateValueFpOnChange={handleUpdateValueFpOnChange}
-            handleUpdateEfficiencyOnChange={handleUpdateEfficiencyOnChange}
-            handleUpdateEfficiencyOnBlur={handleUpdateEfficiencyOnBlur}
-            handleUpdateTP={handleUpdateTP}
-            handleConfirmAddNewCircuit={handleConfirmAddNewCircuit}
-            disabledConfirmAddNewCircuit={disabledConfirmAddNewCircuit}
-            getErrorMessageByFieldName={getErrorMessageByFieldName}
-            valueCVAndHP={valueCVAndHP}
-          />
-          {circuits.length > 0 && (
-            <ViewInfosCircuit circuits={circuits} />
-          )}
-        </div>
-
-        {circuits.length > 0 && (
-          <div className='mx-auto bg-muted/50 p-4 rounded-md h-fit max-[815px]:mt-4' >
-            <h1 className='text-center mb-4 font-bold text-xl' >Formulas</h1>
-
-            <h1>Tensão de fase (Secundario): {sumsIllustrationAndValue.tensionPhaseSecundary.value}A</h1>
-            <h5 className="text-pink-500" >{sumsIllustrationAndValue.tensionPhaseSecundary.illustration}</h5>
-
-            <h1>Corrente horizontal dos circuitos: {sumsIllustrationAndValue.horizontalCurrent.value}A</h1>
-            <h5 className={colors[1]} >{(sumsIllustrationAndValue.horizontalCurrent?.illustration as string[]).join('+')}</h5>
-
-            <h1>Corrente Vertical dos circuitos: {sumsIllustrationAndValue.verticalCurrent.value}A</h1>
-            <h5 className={colors[2]} >{(sumsIllustrationAndValue.verticalCurrent?.illustration as string[]).join('+')}</h5>
-
-            <h3>Corrente total (Secundario): {sumsIllustrationAndValue.totalCurrentSecundary.value}A</h3>
-            <h5 className='text-purple-300' >{sumsIllustrationAndValue.totalCurrentSecundary.illustration}</h5>
-
-            <h3>Corrente de linha (Secundario): {sumsIllustrationAndValue.totalCurrentSecundary.value} φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
-            <h5 className='text-purple-400' >{sumsIllustrationAndValue.tanTotalCurrentLineSecundary.illustration}</h5>
-
-            <h3>Fator de potência do sistema (Secundario): {sumsIllustrationAndValue.FPSystem.value}</h3>
-            <h5 className='text-yellow-300' >{sumsIllustrationAndValue.FPSystem.illustration}</h5>
-
-            <h1>Tensão de fase (Primario): {sumsIllustrationAndValue.tensionPhasePrimary.value}A</h1>
-            <h5 className="text-pink-500" >{sumsIllustrationAndValue.tensionPhasePrimary.illustration}</h5>
-
-            <h1>Corrente de linha (Primario): {sumsIllustrationAndValue.currentLinePrimary.value}A</h1>
-            <h5 className="text-purple-400" >{sumsIllustrationAndValue.currentLinePrimary.illustration}</h5>
-
-            <h3>Potência Aparente Secundario (Ss): {sumsIllustrationAndValue.apparentPotencyS.value}W φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
-            <h5 className="text-green-300" >{sumsIllustrationAndValue.apparentPotencyS.illustration}</h5>
-            <h3>Potência aparente do Primario (Sp): {sumsIllustrationAndValue.apparentPotencyS.value}W φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
-
-            <h3>Potência Ativa Pp: {sumsIllustrationAndValue.activePotencyP.value}W</h3>
-            <h5 className="text-green-400" >{sumsIllustrationAndValue.activePotencyP.illustration}</h5>
-
-            <h3>Potência Reatica Qp: {sumsIllustrationAndValue.reactivePotencyQ.value}W</h3>
-            <h5 className="text-green-500" >{sumsIllustrationAndValue.reactivePotencyQ.illustration}</h5>
-
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return {
+    circuits,
+    setAddNewCircuit,
+    addNewCircuit,
+    setLineTension,
+    lineTension,
+    turnsRatio,
+    handleUpdateTurnsRatioOnChange,
+    handleUpdateTurnsRatioOnBlur,
+    changeInfosCircuit,
+    handleUpdateName,
+    handleUpdateQuantity,
+    handleUpdateTypePotency,
+    handleValuePotency,
+    handleValueTension,
+    handleUpdateValueFpOnBlur,
+    handleUpdateValueFpOnChange,
+    handleUpdateEfficiencyOnChange,
+    handleUpdateEfficiencyOnBlur,
+    handleUpdateTP,
+    handleConfirmAddNewCircuit,
+    disabledConfirmAddNewCircuit,
+    getErrorMessageByFieldName,
+    valueCVAndHP,
+    sumsIllustrationAndValue
+  };
 }
