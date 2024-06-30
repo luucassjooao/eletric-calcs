@@ -7,7 +7,7 @@ export const objRealSum: Record<TypePotency, (value: number) => number> = {
   'VA': (value: number) => value,
   '': () => 0
 };
-export const objIlustrativeString: Record<TypePotency, (value: string) => string> = {
+export const objIllustrationString: Record<TypePotency, (value: string) => string> = {
   'Watts': (value: string) => `${value}W`,
   'CV': (value: string) => `(${value}x736)W`,
   'HP': (value: string) => `(${value}x1,1014x736)W`,

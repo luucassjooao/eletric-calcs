@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ICircuit, InputChange } from '../..';
 import ChooseButton from '../../../../ChooseButton';
 import FormGroup from '../../../../FormGroup';
@@ -11,8 +11,6 @@ interface IProps {
   addNewCircuit: boolean;
   setLineTension: (value: React.SetStateAction<number>) => void;
   lineTension: number;
-  setEditUsageTension: (value: React.SetStateAction<boolean>) => void;
-  editLineUsageTension: boolean;
   changeInfosCircuit: ICircuit;
   handleUpdateName(event: InputChange): void;
   handleUpdateQuantity(event: InputChange): void;
@@ -28,6 +26,9 @@ interface IProps {
   disabledConfirmAddNewCircuit: boolean;
   getErrorMessageByFieldName: ({ fieldName }: MessageError) => string | undefined;
   valueCVAndHP: number;
+  turnsRatio: { primary: number; secundary: number; }
+  handleUpdateTurnsRatioOnChange(event: InputChange): void;
+  handleUpdateTurnsRatioOnBlur(event: InputChange): void;
 }
 
 export default function AddNewCircuit({
@@ -35,8 +36,6 @@ export default function AddNewCircuit({
   addNewCircuit,
   setLineTension,
   lineTension,
-  setEditUsageTension,
-  editLineUsageTension,
   changeInfosCircuit,
   handleUpdateName,
   handleUpdateQuantity,
@@ -51,12 +50,27 @@ export default function AddNewCircuit({
   disabledConfirmAddNewCircuit,
   getErrorMessageByFieldName,
   handleUpdateValueFpOnChange,
-  valueCVAndHP
+  valueCVAndHP,
+  turnsRatio,
+  handleUpdateTurnsRatioOnChange,
+  handleUpdateTurnsRatioOnBlur,
 }: IProps) {
   const [onFocus, setOnFocus] = useState({
     set: false,
     where: ''
   });
+
+  const [editLineUsageTension, setEditLineUsageTension] = useState(false);
+  const [editTurnsRatio, setEditTurnsRatio] = useState(false);
+
+  useEffect(() => {
+    const turnsRatioVerification = !!turnsRatio.primary;
+    turnsRatioVerification ? setEditTurnsRatio(true) : null;
+  }, [turnsRatio.primary]);
+
+  function handleEditTurnsRatio() {
+    setEditTurnsRatio((prev) => !prev);
+  }
 
   return (
     <div className='bg-muted/50 p-4 rounded-md'>
@@ -70,12 +84,26 @@ export default function AddNewCircuit({
             onChange={(e) => setLineTension(Number(e.target.value))}
             type='numeric'
             value={lineTension || ''}
-            onBlur={() => lineTension ? setEditUsageTension(false) : null}
-            disabled={!editLineUsageTension}
+            onBlur={() => lineTension ? setEditLineUsageTension(true) : null}
+            disabled={editLineUsageTension}
             className='justify-center'
           />
-          {!editLineUsageTension && (
-            <Button variant={'ghost'} onClick={() => setEditUsageTension(true)} >EDITE TENSÃO DE LINHA</Button>
+          {editLineUsageTension && (
+            <Button variant={'ghost'} className='border w-full' onClick={() => setEditLineUsageTension(true)} >EDITE TENSÃO DE LINHA</Button>
+          )}
+          <FormGroup error={getErrorMessageByFieldName({ fieldName: 'turnsRatio' })!} >
+              <span className='text-sm' >Qual a relação de espiras do primario e secundario?</span>
+              <TextInput
+                type='text'
+                placeholder='Ex: 1000:100'
+                onChange={handleUpdateTurnsRatioOnChange}
+                onBlur={handleUpdateTurnsRatioOnBlur}
+                className='justify-center'
+                disabled={editTurnsRatio}
+              />
+            </FormGroup>
+                        {editTurnsRatio && (
+            <Button variant={'ghost'} className='border w-full' onClick={handleEditTurnsRatio} >EDITE RELAÇÃO DE ESPIRAS</Button>
           )}
         </div>
       </div>
@@ -158,7 +186,7 @@ export default function AddNewCircuit({
                     value={changeInfosCircuit.fp || ''}
                   >
                   {(onFocus.set && onFocus.where === 'fp') && (
-                    <small className='text-xs fixed mt-1' >FP abaixo de 1, não precisa de colocar 0.</small>
+                    <small className='text-xs fixed mt-1 text-red-700 font-bold' >FP abaixo de 1, não precisa de colocar 0.</small>
                   )}
                   </TextInput>
                 </>
@@ -187,7 +215,7 @@ export default function AddNewCircuit({
                     value={changeInfosCircuit.efficiency || ''}
                   >
                     {(onFocus.set && onFocus.where === 'efficiency') && (
-                      <small className='text-xs fixed mt-1' >Rendimento abaixo de 1, não precisa de colocar 0.</small>
+                      <small className='text-xs fixed mt-1 text-red-700 font-bold' >Rendimento abaixo de 1, não precisa de colocar 0.</small>
                     )}
                   </TextInput>
                 </>

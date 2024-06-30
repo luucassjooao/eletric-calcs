@@ -25,16 +25,16 @@ export default function ViewInfosCircuit({ circuits }: IProps) {
       if (find) {
         return prevState.filter((more) => more.id !== id);
       }
-      return prevState.concat({id});
+      return prevState.concat({ id });
     });
   }
 
-  function viewFormula({id, where}: IUnderlineFormula) {
-    setUnderlineFormula((prevState) => prevState.concat({id, where}));
+  function viewFormula({ id, where }: IUnderlineFormula) {
+    setUnderlineFormula((prevState) => prevState.concat({ id, where }));
   }
 
   return (
-    <div className='bg-muted/50 p-4 mt-4 rounded-md w-fit'>
+    <div className='bg-muted/50 p-4 mt-4 rounded-md'>
       <h1 className='font-bold text-xl text-center' >Circuitos</h1>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3' >
@@ -47,7 +47,7 @@ export default function ViewInfosCircuit({ circuits }: IProps) {
               <h4>Nome: <span className='text-muted-foreground' >{item.name}</span></h4>
               <h4>Quantidade: <span className='text-muted-foreground' >{item.quantity}</span></h4>
               <h4
-                onClick={() => viewFormula({id: item.id, where: 'potency'})}
+                onClick={() => viewFormula({ id: item.id, where: 'potency' })}
                 className='underline underline-offset-4 hover:text-gray-300'
               >Potência:
                 <span className={'text-muted-foreground'}>
@@ -55,55 +55,53 @@ export default function ViewInfosCircuit({ circuits }: IProps) {
                 </span>
               </h4>
               {underlineFormula.find((form) => form.id === item.id && form.where === 'potency') && (
-                <small className='text-blue-400' >{item.ilustrativeCalcPotency}</small>
+                <small className='text-blue-400' >{item.illustrationCalcPotency}</small>
               )}
               <h4>Tensão usada: <span className='text-muted-foreground' >{formatNumber(item.usageVolts)}V</span></h4>
+              <h4
+                onClick={() => viewFormula({ id: item.id, where: 'cos' })}
+                className='underline underline-offset-4 hover:text-gray-300'
+              >
+                Grau defasado: <span className='text-muted-foreground' >-{item.calcsValues?.CosDegrees.value}°</span>
+              </h4>
+              {underlineFormula.find((form) => form.id === item.id && form.where === 'cos') && (
+                <small className='text-blue-400' >{item.calcsValues?.CosDegrees.illustration}</small>
+              )}
               <h4>f.P: <span className='text-muted-foreground' >{String(item.fp).slice(0, 4)}</span></h4>
               <h4>Rendimento: <span className='text-muted-foreground' >{String(item.efficiency).slice(0, 4)}</span></h4>
               {moreInfos.find((more) => more.id === item.id ? true : false) && (
                 <div>
                   <h4
                     className='underline underline-offset-4 hover:text-gray-300'
-                    onClick={() => viewFormula({id: item.id, where: 'current'})}
+                    onClick={() => viewFormula({ id: item.id, where: 'current' })}
                   >Corrente: <span className='text-muted-foreground' >{formatNumber(Number(item.calcsValues?.current.value))}A</span></h4>
                   {underlineFormula.find((form) => form.id === item.id && form.where === 'current') && (
                     <small
                       className='text-blue-400 '
                     >
-                      {item.calcsValues?.current.ilustrative}
+                      {item.calcsValues?.current.illustration}
                     </small>
                   )}
                   <h4
                     className='underline underline-offset-4 hover:text-gray-300'
-                    onClick={() => viewFormula({id: item.id, where: 'fp'})}
-                  >cos-1({String(item.fp).slice(0, 4)}): <span className='text-muted-foreground' >-{item.calcsValues?.CosDegrees.value}</span></h4>
-                  {underlineFormula.find((form) => form.id === item.id && form.where === 'fp') && (
-                    <small
-                      className='text-blue-400'
-                    >
-                      {item.calcsValues?.CosDegrees.ilustrative}
-                    </small>
-                  )}
-                  <h4
-                    className='underline underline-offset-4 hover:text-gray-300'
-                    onClick={() => viewFormula({id: item.id, where: 'horizontal'})}
+                    onClick={() => viewFormula({ id: item.id, where: 'horizontal' })}
                   >Corrente horizontal: <span className='text-muted-foreground' >{formatNumber(Number(item.calcsValues?.horizontalCurrent.value))}A</span> </h4>
                   {underlineFormula.find((form) => form.id === item.id && form.where === 'horizontal') && (
                     <small
                       className='text-blue-400'
                     >
-                      {item.calcsValues?.horizontalCurrent.ilustrative}
+                      {item.calcsValues?.horizontalCurrent.illustration}
                     </small>
                   )}
                   <h4
                     className='underline underline-offset-4 hover:text-gray-300'
-                    onClick={() => viewFormula({id: item.id, where: 'vertical'})}
+                    onClick={() => viewFormula({ id: item.id, where: 'vertical' })}
                   >Corrente vertical: <span className='text-muted-foreground' >-{formatNumber(Number(item.calcsValues?.verticalCurrent.value))}A</span></h4>
                   {underlineFormula.find((form) => form.id === item.id && form.where === 'vertical') && (
                     <small
                       className='text-blue-400'
                     >
-                      {item.calcsValues?.verticalCurrent.ilustrative}
+                      {item.calcsValues?.verticalCurrent.illustration}
                     </small>
                   )}
                 </div>

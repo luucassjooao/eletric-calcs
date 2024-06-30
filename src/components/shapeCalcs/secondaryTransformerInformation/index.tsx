@@ -3,7 +3,7 @@ import AddNewCircuit from './components/addNewCircuit';
 import ViewInfosCircuit from './components/viewInfosCircuit';
 import { useErrors } from '@/app/hooks/useErrors';
 import { cn } from '@/app/libs/utils';
-import { objIlustrativeString, objRealSum } from './constant/objLiterals';
+import { objIllustrationString, objRealSum } from './constant/objLiterals';
 import { colors } from './constant/colors';
 import { formatNumber } from '@/app/utils/functions/formatNumber';
 
@@ -11,10 +11,9 @@ export type TypePotency = 'Watts' | 'CV' | 'HP' | 'VA' | '';
 
 export interface ICircuit {
   id: string;
-  // type: string; // indutive resistive capacitive
   typePotency: TypePotency;
   valuePotency: number;
-  ilustrativeCalcPotency: string;
+  illustrationCalcPotency: string;
   usageVolts: number;
   threePhase: boolean;
   fp: number;
@@ -25,21 +24,41 @@ export interface ICircuit {
   calcsValues?: {
     current: {
       value: string;
-      ilustrative: string
-    };
+      illustration: string;
+    }
     CosDegrees: {
       value: string;
-      ilustrative: string;
-    }
+      illustration: string;
+    };
     horizontalCurrent: {
       value: string;
-      ilustrative: string;
-    }
+      illustration: string;
+    };
     verticalCurrent: {
       value: string;
-      ilustrative: string;
-    }
+      illustration: string;
+    };
   }
+}
+
+interface ITypeSums<T> {
+  value: string;
+  illustration: T | string;
+}
+
+interface ISumsValueAndIllustration {
+  horizontalCurrent: ITypeSums<string[]>;
+  verticalCurrent: ITypeSums<string[]>;
+  totalCurrentSecundary: ITypeSums<string>;
+  tanTotalCurrentLineSecundary: ITypeSums<string>;
+  tensionPhaseSecundary: ITypeSums<string>;
+  tensionPhasePrimary: ITypeSums<string>;
+  currentLinePrimary: ITypeSums<string>;
+  apparentPotencyS: ITypeSums<string>;
+  activePotencyP: ITypeSums<string>;
+  reactivePotencyQ: ITypeSums<string>;
+  FPSystem: ITypeSums<string>;
+  tanDegreeCurrentSecundary: string;
 }
 
 export type InputChange = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -56,37 +75,61 @@ export default function SecondaryTransformerInformations() {
     threePhase: false,
     valuePotency: 0,
     typePotency: '',
-    ilustrativeCalcPotency: '',
-    id: String(Math.random())
+    illustrationCalcPotency: '',
+    id: String(Math.random()),
   });
-  const [editLineUsageTension, setEditLineUsageTension] = useState(true);
   const [lineTension, setLineTension] = useState(0);
-
-  const [sums, setSums] = useState({
-    totalSumHorizontalCurrent: 0,
-    totalSumVerticalCurrent: 0,
-    totalCurrent: 0,
-    tanDegree: 0,
-    tanRadians: 0,
-    FPSystem: 0,
-    potencySs: 0,
-    potencyP: 0,
-    potenctQ: 0,
+  const [turnsRatio, setTurnsRatio] = useState({
+      primary: 0,
+      secundary: 0
   });
-  const [ilustrativeSums, setIlustrativesSums] = useState<{
-    totalHorizontalCurrent?: {
-      ilustrative: string[];
-    };
-    totalVerticalCurrent?: {
-      ilustrative: string[];
-    };
-  }>({
-    totalHorizontalCurrent: {
-      ilustrative: [],
+
+  const [sumsIllustrationAndValue, setSumsIllustrationValue] = useState<ISumsValueAndIllustration>({
+    horizontalCurrent: {
+      value: '',
+      illustration: []
     },
-    totalVerticalCurrent: {
-      ilustrative: []
+    verticalCurrent: {
+      value: '',
+      illustration: []
     },
+    totalCurrentSecundary: {
+      value: '',
+      illustration: '',
+    },
+    tanTotalCurrentLineSecundary: {
+      value: '',
+      illustration: '',
+    },
+    tensionPhaseSecundary: {
+      value: '',
+      illustration: '',
+    },
+    tensionPhasePrimary: {
+      value: '',
+      illustration: '',
+    },
+    currentLinePrimary: {
+      value: '',
+      illustration: '',
+    },
+    apparentPotencyS: {
+      value: '',
+      illustration: '',
+    },
+    activePotencyP: {
+      value: '',
+      illustration: '',
+    },
+    reactivePotencyQ: {
+      value: '',
+      illustration: '',
+    },
+    FPSystem: {
+      value: '',
+      illustration: '',
+    },
+    tanDegreeCurrentSecundary: '',
   });
 
   const [valueCVAndHP, setValueCVAndHP] = useState(0);
@@ -107,36 +150,86 @@ export default function SecondaryTransformerInformations() {
       return acc += Number(curr.calcsValues?.verticalCurrent.value);
     }, 0);
 
-    const totalCurrent = Math.sqrt(
+    const totalCurrentSecundaryHorizontalxVertical = Math.sqrt(
       Math.pow(totalSumHorizontalCurrent, 2) + Math.pow(-totalSumVerticalCurrent, 2)
     );
+    const totalCurrentSecundaryHorizontalxVerticalIllustration =
+      `√((${formatNumber(totalSumHorizontalCurrent)})^2 + (-${formatNumber(totalSumVerticalCurrent)})^2)`;
 
-    const tanDegree = Math.atan(
+    const tanTotalCurrentLineSecundary = Math.atan(
       -totalSumVerticalCurrent / totalSumHorizontalCurrent
     ) * (180 / Math.PI);
-    const tanRadians = tanDegree * (Math.PI / 180);
-    console.log({ tanRadians }, Math.cos(tanRadians));
+    const tanTotalCurrentLineSecundaryIllustration =
+    `${formatNumber(totalCurrentSecundaryHorizontalxVertical) + 'x' + 'tan-1' + `(-${formatNumber(totalSumVerticalCurrent)}/${formatNumber(totalSumHorizontalCurrent)})`}`;
 
+    const tanRadians = tanTotalCurrentLineSecundary * (Math.PI / 180);
     const FPSystem = Math.cos(tanRadians);
+    const FPSystemIllustration = `cos(${String(tanRadians).slice(0, 4)})`;
 
-    const potencySs = Math.sqrt(3) * lineTension * totalCurrent;
+    const potencySs = Math.sqrt(3) * lineTension * totalCurrentSecundaryHorizontalxVertical;
+    const potencySsIllustration = `√3 x ${formatNumber(lineTension)} x ${formatNumber(totalCurrentSecundaryHorizontalxVertical)}`;
+
     const potencyP = potencySs * FPSystem;
-    const potenctQ = Math.sqrt(
+    const potencyPIllustration = `${formatNumber(potencySs)} * ${String(FPSystem).slice(0, 4)}`;
+
+    const potencyQ = Math.sqrt(
       Math.pow(potencySs, 2) + Math.pow(potencyP, 2)
     );
+    const potencyQIllustration = `√{(${formatNumber(potencySs)}^2 + ${formatNumber(potencyP)}^2)}`;
 
-    setSums({
-      FPSystem,
-      potenctQ,
-      potencyP,
-      potencySs,
-      tanDegree,
-      tanRadians,
-      totalCurrent,
-      totalSumHorizontalCurrent,
-      totalSumVerticalCurrent
-    });
-  }, [lineTension, circuits]);
+    const tensionPhaseSecundary = lineTension / Math.sqrt(3);
+    const tensionPhaseSecundaryIllustration = `${formatNumber(lineTension)}/√3`;
+
+    const divisionTurnsRatio = turnsRatio.primary/turnsRatio.secundary;
+    const divisionTurnsRatioIllustration = `${turnsRatio.primary}/${turnsRatio.secundary}`;
+
+    const tensionPhasePrimary = tensionPhaseSecundary*divisionTurnsRatio;
+    const tensionPhasePrimaryIllustration = `${formatNumber(tensionPhaseSecundary)}x(${divisionTurnsRatioIllustration})`;
+
+    const currentLinePrimary = potencySs/(tensionPhasePrimary*Math.sqrt(3));
+    const currentLinePrimaryIllustration = `${formatNumber(potencySs)}/(${formatNumber(tensionPhasePrimary)})x√3)`;
+
+    setSumsIllustrationValue((prevState) => ({
+      ...prevState,
+      totalCurrentSecundary: {
+        value: formatNumber(totalCurrentSecundaryHorizontalxVertical),
+        illustration: totalCurrentSecundaryHorizontalxVerticalIllustration
+      },
+      tanTotalCurrentLineSecundary: {
+        value: formatNumber(tanTotalCurrentLineSecundary),
+        illustration: tanTotalCurrentLineSecundaryIllustration
+      },
+      tensionPhaseSecundary: {
+        value: formatNumber(tensionPhaseSecundary),
+        illustration: tensionPhaseSecundaryIllustration
+      },
+      tensionPhasePrimary: {
+        value: formatNumber(tensionPhasePrimary),
+        illustration: tensionPhasePrimaryIllustration
+      },
+      currentLinePrimary: {
+        value: String(currentLinePrimary).slice(0, 6),
+        illustration: currentLinePrimaryIllustration
+      },
+      apparentPotencyS: {
+        value: formatNumber(potencySs),
+        illustration: potencySsIllustration
+      },
+      activePotencyP: {
+        value: formatNumber(potencyP),
+        illustration: potencyPIllustration
+      },
+      reactivePotencyQ: {
+        value: formatNumber(potencyQ),
+        illustration: potencyQIllustration
+      },
+      FPSystem: {
+        value: String(FPSystem).slice(0, 4),
+        illustration: FPSystemIllustration
+      },
+      tanDegreeCurrentSecundary: String(tanRadians).slice(0, 4)
+    }));
+  }, [lineTension, circuits, turnsRatio]);
 
   const regexAlphabeticCharacters = /[a-zA-Z]/g;
 
@@ -164,8 +257,8 @@ export default function SecondaryTransformerInformations() {
     }
     setChangeInfosCircuit((prev) => {
       const typePotency = valueTypePotency;
-      const ilustrativeCalcPotency = objIlustrativeString[valueTypePotency](String(valueTypePotency));
-      return { ...prev, typePotency, ilustrativeCalcPotency };
+      const illustrationCalcPotency = objIllustrationString[valueTypePotency](String(valueTypePotency));
+      return { ...prev, typePotency, illustrationCalcPotency };
     });
   }
 
@@ -182,10 +275,9 @@ export default function SecondaryTransformerInformations() {
     setValueCVAndHP(valueNumber);
 
     setChangeInfosCircuit((prev) => {
-      const ilustrativeCalcPotency = objIlustrativeString[prev.typePotency](value.replace(regexAlphabeticCharacters, ''));
+      const illustrationCalcPotency = objIllustrationString[prev.typePotency](value.replace(regexAlphabeticCharacters, ''));
       const valuePotency = objRealSum[prev.typePotency]((valueNumber));
-      console.log(valuePotency);
-      return { ...prev, valuePotency, ilustrativeCalcPotency };
+      return { ...prev, valuePotency, illustrationCalcPotency };
     });
   }
 
@@ -284,6 +376,35 @@ export default function SecondaryTransformerInformations() {
     });
   }
 
+  function handleUpdateTurnsRatioOnChange(event: InputChange) {
+    const value = event.target.value;
+
+    if(!value) {
+      setError({ field: 'turnsRatio', message: 'Coloque a relação de espiras!' });
+    } else {
+      removeError({ fieldName: 'turnsRatio' });
+    }
+  }
+
+  function handleUpdateTurnsRatioOnBlur(event: InputChange) {
+    const value = event.target.value;
+    const regexVerificationShapeTurnsRatio = /^\d+:\d+$/;
+
+    if(!value) {
+      setError({ field: 'turnsRatio', message: 'Coloque a relação de espiras!' });
+    } else if (!regexVerificationShapeTurnsRatio.test(value)) {
+      setError({ field: 'turnsRatio', message: 'Formato de espiras inválido. Ele deve ser assim: 1000:100' });
+      return;
+    } else {
+      removeError({ fieldName: 'turnsRatio' });
+    }
+
+    const [primary, secundary] = value.split(':');
+    setTurnsRatio({
+      primary: Number(primary), secundary: Number(secundary)
+    });
+  }
+
   function handleConfirmAddNewCircuit() {
     const current =
       (changeInfosCircuit.valuePotency) / (
@@ -300,58 +421,57 @@ export default function SecondaryTransformerInformations() {
     );
 
     const usageCurrent = changeInfosCircuit.typePotency === 'VA' ? currentWithoutFp :  current;
-    const currentIlustrative =
-      `${(formatNumber(changeInfosCircuit.valuePotency))}/(${changeInfosCircuit.threePhase ? '√3' : '1'
+    const currentIllustration =
+      `(${(formatNumber(changeInfosCircuit.valuePotency))}/(${changeInfosCircuit.threePhase ? '√3' : '1'
       }x${formatNumber(changeInfosCircuit.usageVolts)}
         ${changeInfosCircuit.typePotency !== 'VA' ? (
         'x' + String(changeInfosCircuit.fp).slice(0, 4) + 'x' +
         String(changeInfosCircuit.efficiency).slice(0, 4)
-      ) : ''})`;
+      ) : ''}))`;
 
     const CosRadians = Math.acos(changeInfosCircuit.fp);
     const CosDegrees = CosRadians * (180 / Math.PI);
-    const CosDegreesIlustrative = `cos-1(${String(changeInfosCircuit.fp).slice(0, 4)})`;
+    const CosDegreesIllustrative = `cos-1(${String(changeInfosCircuit.fp).slice(0, 4)})`;
 
     const horizontalCurrent = usageCurrent * Math.cos(CosRadians);
-    const horizontalCurrentIlustrative =
-      `${formatNumber(usageCurrent)}xcos-1(${String(CosDegrees).slice(0, 4)})`;
+    const horizontalCurrentIllustration =
+      `${formatNumber(usageCurrent)}xcos-1(-${String(CosDegrees).slice(0, 4)})`;
 
     const verticalCurrent = changeInfosCircuit.fp === 1 ? 0 : usageCurrent * -Math.sin(CosRadians);
-    const verticalCurrentIlustrative =
+    const verticalCurrentIllustration =
       `${formatNumber(usageCurrent)}*sin(-${String(CosDegrees).slice(0, 4)})`;
 
-    setIlustrativesSums((prev) => {
-      const totalHorizontalCurrent = prev.totalHorizontalCurrent?.ilustrative.concat(horizontalCurrentIlustrative) || [];
-      const totalVerticalCurrent = prev.totalVerticalCurrent?.ilustrative.concat(verticalCurrentIlustrative) || [];
-      return {
-        totalHorizontalCurrent: {
-          ilustrative: totalHorizontalCurrent
-        },
-        totalVerticalCurrent: {
-          ilustrative: totalVerticalCurrent
-        },
-      };
-    });
+    setSumsIllustrationValue((prevState) => ({
+      ...prevState,
+      horizontalCurrent: {
+        value: formatNumber(horizontalCurrent),
+        illustration:  prevState.horizontalCurrent.illustration.concat(horizontalCurrentIllustration)
+      },
+      verticalCurrent: {
+        value: formatNumber(verticalCurrent),
+        illustration: prevState.verticalCurrent.illustration.concat(verticalCurrentIllustration)
+      },
+    }));
 
     const obj: ICircuit = {
       ...changeInfosCircuit,
       calcsValues: {
         current: {
-          value: String(usageCurrent),
-          ilustrative: currentIlustrative
+          value: formatNumber(usageCurrent),
+          illustration: currentIllustration,
         },
         CosDegrees: {
           value: String(CosDegrees).slice(0, 4),
-          ilustrative: CosDegreesIlustrative
+          illustration: CosDegreesIllustrative
         },
         horizontalCurrent: {
-          value: String(horizontalCurrent),
-          ilustrative: horizontalCurrentIlustrative
+          value: formatNumber(horizontalCurrent),
+          illustration: horizontalCurrentIllustration
         },
         verticalCurrent: {
-          value: String(-verticalCurrent),
-          ilustrative: verticalCurrentIlustrative
-        }
+          value: formatNumber(-verticalCurrent),
+          illustration: verticalCurrentIllustration
+        },
       }
     };
 
@@ -369,7 +489,7 @@ export default function SecondaryTransformerInformations() {
       threePhase: false,
       valuePotency: 0,
       typePotency: '',
-      ilustrativeCalcPotency: '',
+      illustrationCalcPotency: '',
       id: String(Math.random()),
     });
     setValueCVAndHP(0);
@@ -383,7 +503,7 @@ export default function SecondaryTransformerInformations() {
     changeInfosCircuit.usageVolts &&
     changeInfosCircuit.valuePotency &&
     changeInfosCircuit.typePotency &&
-    changeInfosCircuit.ilustrativeCalcPotency &&
+    changeInfosCircuit.illustrationCalcPotency &&
     errors.length === 0
   );
 
@@ -397,8 +517,9 @@ export default function SecondaryTransformerInformations() {
             addNewCircuit={addNewCircuit}
             setLineTension={setLineTension}
             lineTension={lineTension}
-            setEditUsageTension={setEditLineUsageTension}
-            editLineUsageTension={editLineUsageTension}
+            turnsRatio={turnsRatio}
+            handleUpdateTurnsRatioOnChange={handleUpdateTurnsRatioOnChange}
+            handleUpdateTurnsRatioOnBlur={handleUpdateTurnsRatioOnBlur}
             changeInfosCircuit={changeInfosCircuit}
             handleUpdateName={handleUpdateName}
             handleUpdateQuantity={handleUpdateQuantity}
@@ -424,50 +545,40 @@ export default function SecondaryTransformerInformations() {
           <div className='mx-auto bg-muted/50 p-4 rounded-md h-fit max-[815px]:mt-4' >
             <h1 className='text-center mb-4 font-bold text-xl' >Formulas</h1>
 
-            <h3>Corrente dos circuitos: {formatNumber(sums.totalCurrent)}A</h3>
-            {circuits.map((item, index) => (
-              <h5 key={index} className={`${colors[index % colors.length]}`} >
-                {item.calcsValues?.current.ilustrative}
-              </h5>
-            ))}
+            <h1>Tensão de fase (Secundario): {sumsIllustrationAndValue.tensionPhaseSecundary.value}A</h1>
+            <h5 className="text-pink-500" >{sumsIllustrationAndValue.tensionPhaseSecundary.illustration}</h5>
 
-            <h1>Corrente horizontal dos circuitos: {formatNumber(sums.totalSumHorizontalCurrent)}A</h1>
-            {circuits.map((item, index) => (
-              <h5 key={index} className={`${colors[index + 1 % colors.length]}`} >
-                {item.calcsValues?.horizontalCurrent.ilustrative}
-              </h5>
-            ))}
+            <h1>Corrente horizontal dos circuitos: {sumsIllustrationAndValue.horizontalCurrent.value}A</h1>
+            <h5 className={colors[1]} >{(sumsIllustrationAndValue.horizontalCurrent?.illustration as string[]).join('+')}</h5>
 
-            <h1>Corrente Vertical dos circuitos: {formatNumber(sums.totalSumVerticalCurrent)}A</h1>
-            {circuits.map((item, index) => (
-              <h5 key={index} className={`${colors[index + 2 % colors.length]}`} >
-                {item.calcsValues?.verticalCurrent.ilustrative}
-              </h5>
-            ))}
+            <h1>Corrente Vertical dos circuitos: {sumsIllustrationAndValue.verticalCurrent.value}A</h1>
+            <h5 className={colors[2]} >{(sumsIllustrationAndValue.verticalCurrent?.illustration as string[]).join('+')}</h5>
 
-            <h3>Corrente Total Horizontal: {formatNumber(sums.totalSumHorizontalCurrent)}A</h3>
-            <h5 className="text-green-300" >{ilustrativeSums.totalHorizontalCurrent?.ilustrative.join('+')}</h5>
+            <h3>Corrente total (Secundario): {sumsIllustrationAndValue.totalCurrentSecundary.value}A</h3>
+            <h5 className='text-purple-300' >{sumsIllustrationAndValue.totalCurrentSecundary.illustration}</h5>
 
-            <h3>Corrente Total Vertical: {formatNumber(sums.totalSumVerticalCurrent)}A</h3>
-            <h5 className="text-green-400" >{ilustrativeSums.totalVerticalCurrent?.ilustrative.join('+')}</h5>
+            <h3>Corrente de linha (Secundario): {sumsIllustrationAndValue.totalCurrentSecundary.value} φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
+            <h5 className='text-purple-400' >{sumsIllustrationAndValue.tanTotalCurrentLineSecundary.illustration}</h5>
 
-            <h3>Corrente Total: {formatNumber(sums.totalCurrent)}A</h3>
-            <h5 className='text-purple-300' >√{`((${formatNumber(sums.totalSumHorizontalCurrent)})^2 + (-${formatNumber(sums.totalSumVerticalCurrent)})^2)`}</h5>
+            <h3>Fator de potência do sistema (Secundario): {sumsIllustrationAndValue.FPSystem.value}</h3>
+            <h5 className='text-yellow-300' >{sumsIllustrationAndValue.FPSystem.illustration}</h5>
 
-            <h3>Corrente x Tan: {formatNumber(sums.tanDegree)}</h3>
-            <h5 className='text-purple-400' >{formatNumber(sums.totalCurrent)} x √{`(-${formatNumber(sums.totalSumVerticalCurrent)}/${formatNumber(sums.totalSumHorizontalCurrent)})`}</h5>
+            <h1>Tensão de fase (Primario): {sumsIllustrationAndValue.tensionPhasePrimary.value}A</h1>
+            <h5 className="text-pink-500" >{sumsIllustrationAndValue.tensionPhasePrimary.illustration}</h5>
 
-            <h3>Fator de potência do sistema: {String(sums.FPSystem).slice(0, 4)}</h3>
-            <h5 className='text-yellow-300' >cos{`(${formatNumber(sums.tanDegree)})`}</h5>
+            <h1>Corrente de linha (Primario): {sumsIllustrationAndValue.currentLinePrimary.value}A</h1>
+            <h5 className="text-purple-400" >{sumsIllustrationAndValue.currentLinePrimary.illustration}</h5>
 
-            <h3>Potência Aparente: {formatNumber(sums.potencySs)}W</h3>
-            <h5 className={colors[0]} >√3 x {formatNumber(lineTension)} x {formatNumber(sums.totalCurrent)}</h5>
+            <h3>Potência Aparente Secundario (Ss): {sumsIllustrationAndValue.apparentPotencyS.value}W φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
+            <h5 className="text-green-300" >{sumsIllustrationAndValue.apparentPotencyS.illustration}</h5>
+            <h3>Potência aparente do Primario (Sp): {sumsIllustrationAndValue.apparentPotencyS.value}W φ{sumsIllustrationAndValue.tanDegreeCurrentSecundary}°</h3>
 
-            <h3>Potência P: {formatNumber(sums.potencyP)}W</h3>
-            <h5 className={colors[1]} >{formatNumber(sums.potencySs)} * {String(sums.FPSystem).slice(0, 4)}</h5>
+            <h3>Potência Ativa Pp: {sumsIllustrationAndValue.activePotencyP.value}W</h3>
+            <h5 className="text-green-400" >{sumsIllustrationAndValue.activePotencyP.illustration}</h5>
 
-            <h3>Potência Q: {formatNumber(sums.potenctQ)}W</h3>
-            <h5 className={colors[2]} >√{`(${formatNumber(sums.potencySs)}^2 + ${formatNumber(sums.potencyP)}^2)`}</h5>
+            <h3>Potência Reatica Qp: {sumsIllustrationAndValue.reactivePotencyQ.value}W</h3>
+            <h5 className="text-green-500" >{sumsIllustrationAndValue.reactivePotencyQ.illustration}</h5>
+
           </div>
         )}
       </div>
