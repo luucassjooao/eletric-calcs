@@ -1,12 +1,13 @@
+import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from './app/context/ThemeProvider';
-import InfosTrafoBySecundarySide from './components/shapeCalcs/InfosTrafoBySecundarySide';
-
+import { Header } from './components/Header';
+import { router } from './app/routes';
 
 function App() {
-
   return (
     <ThemeProvider>
-      <InfosTrafoBySecundarySide />
+      <Header />
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 }
