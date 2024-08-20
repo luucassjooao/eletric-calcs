@@ -1,73 +1,63 @@
-import ViewInfosCircuit from './components/viewInfosCircuit';
 import { cn } from '@/app/libs/utils';
+import { useCorrectingThePowerFactor } from './useCorrectingThePowerFactor';
+import { ViewInfosCircuits } from './components/viewInfosCircuits';
 import { AllFormulas } from './components/allFormulas';
-import { useInfosTrafoBySecundarySide } from './useInfosTrafoBySecundarySide';
 import { AddNewCircuit } from '@/components/addNewCircuit';
 
-export default function InfosTrafoBySecundarySide() {
+export function CorrectingThePowerFactor() {
   const {
-    circuits,
     setAddNewCircuit,
     addNewCircuit,
-    setLineTension,
-    lineTension,
-    turnsRatio,
-    handleUpdateTurnsRatioOnChange,
-    handleUpdateTurnsRatioOnBlur,
+    setTensionVfn,
+    tensionVfn,
     changeInfosCircuit,
     handleUpdateName,
     handleUpdateQuantity,
     handleUpdateTypePotency,
     handleValuePotency,
-    handleValueTension,
     handleUpdateValueFpOnBlur,
-    handleUpdateValueFpOnChange,
-    handleUpdateEfficiencyOnChange,
     handleUpdateEfficiencyOnBlur,
-    handleUpdateTP,
+    handleUpdateEfficiencyOnChange,
     handleConfirmAddNewCircuit,
     disabledConfirmAddNewCircuit,
     getErrorMessageByFieldName,
+    handleUpdateValueFpOnChange,
     valueCVAndHP,
+    circuits,
     sumsIllustrationAndValue
-  } = useInfosTrafoBySecundarySide();
+  } = useCorrectingThePowerFactor();
 
   return (
     <div className='mt-10 max-[815px]:mx-auto mb-14' >
       <h1 className='text-center mb-8 font-bold text-xl' >
-        Conseguindo informações do trafo a partir de informações do secundário
+        Corrigindo o fator de potência com capacitores
       </h1>
       <div className={'flex max-[815px]:flex-col mt-0'} >
         <div className={cn(circuits.length > 0 ? 'max-w-[570px] hover:overflow-y-auto h-screen max-[815px]:h-auto' : 'w-fit', 'mx-auto max-[815px]:w-fit')} >
           <AddNewCircuit
             setAddNewCircuit={setAddNewCircuit}
             addNewCircuit={addNewCircuit}
-            setTension={setLineTension}
-            tension={lineTension}
-            turnsRatio={turnsRatio}
-            handleUpdateTurnsRatioOnChange={handleUpdateTurnsRatioOnChange}
-            handleUpdateTurnsRatioOnBlur={handleUpdateTurnsRatioOnBlur}
+            setTension={setTensionVfn}
+            tension={tensionVfn}
             changeInfosCircuit={changeInfosCircuit}
             handleUpdateName={handleUpdateName}
             handleUpdateQuantity={handleUpdateQuantity}
             handleUpdateTypePotency={handleUpdateTypePotency}
             handleValuePotency={handleValuePotency}
-            handleValueTension={handleValueTension}
             handleUpdateValueFpOnBlur={handleUpdateValueFpOnBlur}
             handleUpdateValueFpOnChange={handleUpdateValueFpOnChange}
             handleUpdateEfficiencyOnChange={handleUpdateEfficiencyOnChange}
             handleUpdateEfficiencyOnBlur={handleUpdateEfficiencyOnBlur}
-            handleUpdateTP={handleUpdateTP}
             handleConfirmAddNewCircuit={handleConfirmAddNewCircuit}
             disabledConfirmAddNewCircuit={!!disabledConfirmAddNewCircuit}
             getErrorMessageByFieldName={getErrorMessageByFieldName}
             valueCVAndHP={valueCVAndHP}
-            placeholderEditTension='EDITE TENSÃO DE LINHA'
-            placeholderTension='Qual a tensão de linha?'
-            styleAddNewCircuit='InfosTrafoBySecundary'
+            placeholderEditTension='EDITAR TENSÃO FASE NEUTRO'
+            placeholderTension='Qual a tensão fase neutro?'
+            styleAddNewCircuit='CorrectingThePowerFactor'
           />
           {circuits.length > 0 && (
-            <ViewInfosCircuit circuits={circuits} />
+            <ViewInfosCircuits circuits={circuits} />
           )}
         </div>
 

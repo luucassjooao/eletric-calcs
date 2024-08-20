@@ -4,7 +4,7 @@ export interface MessageError {
   fieldName: string;
 }
 
-interface SetErrors {
+export interface SetErrors {
   field: string;
   message: string;
 }
@@ -32,7 +32,7 @@ export function useErrors() {
   }
 
   // eslint-disable-next-line max-len
-  const getErrorMessageByFieldName = ({ fieldName }: MessageError) => 
+  const getErrorMessageByFieldName = ({ fieldName }: MessageError) =>
       errors.find((error) => error.field === fieldName)?.message;
 
   return {

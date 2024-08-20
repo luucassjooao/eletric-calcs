@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { formatNumber } from '@/app/utils/functions/formatNumber';
-import { ICircuit } from '../../types';
+import { ICalcsValues } from '../../types';
+import { ICircuit } from '@/app/hooks/standardFuncsOnShapeCalcs/types';
 
 interface IProps {
-  circuits: ICircuit[];
+  circuits: ICircuit<ICalcsValues>[];
 }
 
 export interface IUnderlineFormula {
@@ -51,13 +52,13 @@ export default function ViewInfosCircuit({ circuits }: IProps) {
                 className='underline underline-offset-4 hover:text-gray-300'
               >Potência:
                 <span className={'text-muted-foreground'}>
-                  {formatNumber(item.valuePotency)}{item.typePotency}
+                  {formatNumber(item.valuePotency)}W
                 </span>
               </h4>
               {underlineFormula.find((form) => form.id === item.id && form.where === 'potency') && (
                 <small className='text-blue-400' >{item.illustrationCalcPotency}</small>
               )}
-              <h4>Tensão usada: <span className='text-muted-foreground' >{formatNumber(item.usageVolts)}V</span></h4>
+              <h4>Tensão usada: <span className='text-muted-foreground' >{formatNumber(item.usageVolts!)}V</span></h4>
               <h4
                 onClick={() => viewFormula({ id: item.id, where: 'cos' })}
                 className='underline underline-offset-4 hover:text-gray-300'

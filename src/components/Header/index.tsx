@@ -23,6 +23,17 @@ const components: {
       },
     ],
   },
+  {
+    labelButton: 'Eficiência Energetica',
+    infos: [
+      {
+        title: 'Corrigir fator de potência',
+        href: routesPath.CorrectingThePowerFactor,
+        description:
+          'Saiba quanto é seu fator de potência, e saiba como corrigir',
+      },
+    ],
+  },
 ];
 
 export function Header() {

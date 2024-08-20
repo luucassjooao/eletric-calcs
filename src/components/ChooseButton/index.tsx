@@ -10,7 +10,7 @@ interface IProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
   gridCols?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 }
 
-export default function ChooseButton({ choices, indexObj = 0, handleUpdateValue, gridCols = 0, valueSelected, ...props }: IProps) {
+export default function ChooseButton({ choices, indexObj = 0, handleUpdateValue, gridCols = 2, valueSelected, ...props }: IProps) {
   return (
     <div className={`grid grid-cols-${gridCols}`} >
       {choices.map((item, index) => (
